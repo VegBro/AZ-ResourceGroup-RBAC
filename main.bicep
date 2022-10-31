@@ -7,15 +7,26 @@ param resourceGroupName string
 param resourceGroupLocation string
 
 @description('principalId of the user that will be given contributor access to the resourceGroup')
-param principalId string
+param principalIdOwner string
+param principalIdContributor string
+param principalIdReader string
+
 
 @description('roleDefinition to apply to the resourceGroup - default is contributor')
-param roleDefinitionId string = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+param roleDefinitionIdOwner string 
+param roleDefinitionIdContributor string 
+param roleDefinitionIdReader string 
+
+
 
 @description('Unique name for the roleAssignment in the format of a guid')
-param roleAssignmentName string = guid(principalId, roleDefinitionId, resourceGroupName)
+// param roleAssignmentNameOwner string = guid(principalIdOwner, roleDefinitionIdOwner, resourceGroupName)
+// param roleAssignmentNameContributor string = guid(principalIdContributor, roleDefinitionIdContributor, resourceGroupName)
+// param roleAssignmentNameReader string = guid(principalIdReader, roleDefinitionIdReader, resourceGroupName)
 
-var roleID = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionId}'
+var roleIDOwner = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionIdOwner}'
+var roleIDContributor = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionIdContributor}'
+var roleIDReader = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionIdReader}'
 
 resource newResourceGroup 'Microsoft.Resources/resourceGroups@2019-10-01' = {
   name: resourceGroupName
@@ -23,12 +34,33 @@ resource newResourceGroup 'Microsoft.Resources/resourceGroups@2019-10-01' = {
   properties: {}
 }
 
-module assignRole 'role.bicep' = {
-  name: 'assignRBACRole'
+module assignRoleOwner 'owner_role.bicep' = {
+  name: 'assignRBACRoleOwner'
   scope: newResourceGroup
   params: {
-    principalId: principalId
-    roleNameGuid: roleAssignmentName
-    roleDefinitionId: roleID
+    principalIdOwner: principalIdOwner
+    //roleNameGuidOwner: roleAssignmentNameOwner
+    roleDefinitionIdOwner: roleIDOwner
   }
+  
+}
+module assignRoleContributor 'contributor_role.bicep' = {
+  name: 'assignRBACRoleContributor'
+  scope: newResourceGroup
+  params: {
+    principalIdContributor: principalIdContributor
+    //roleNameGuidContributor: roleAssignmentNameContributor
+    roleDefinitionIdContributor: roleIDContributor
+  }
+  
+}
+module assignRole 'reader_role.bicep' = {
+  name: 'assignRBACRoleReader'
+  scope: newResourceGroup
+  params: {
+    principalIdReader: principalIdReader
+    //roleNameGuidReader: roleAssignmentNameReader
+    roleDefinitionIdReader: roleIDReader
+  }
+  
 }
