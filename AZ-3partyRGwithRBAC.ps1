@@ -60,7 +60,7 @@ $EnvironementForkortelse = "prod"
 $RGNavn = $KundeForkortelse + "-" + $ResourceGroupForkortelse + "-" + $Workload + "-" + $EnvironementForkortelse + "-" + $Region
 $AADGrpNavnOwner = "az-rbac-owner-" + $RGNavn
 $AADGrpNavnContributor = "az-rbac-contributor-" + $RGNavn
-$AADGrpNavnReader = "az-rbac-reader" + $RGNavn
+$AADGrpNavnReader = "az-rbac-reader-" + $RGNavn
 
 Write-Host "Ressursgruppe navn blir da: $RGNavn" -ForegroundColor Green
 
