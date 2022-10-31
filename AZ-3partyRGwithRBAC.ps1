@@ -12,7 +12,7 @@ function venteanimasjon {
         $anim=@("0o.......o","o0o.......",".o0o......","..o0o.....","...o0o....","....o0o...",".....o0o..","......o0o.",".......o0o","o.......o0") # Animasjonssekvens
         while ($sekunder -gt 0) {
             $anim | % {
-                Write-Host "$blank$tekst $_" -NoNewline -ForegroundColor Yellow 
+                Write-Host "$blank$tekst $_" -NoNewline -ForegroundColor Green 
                 Start-Sleep -m 100
             }
             $sekunder --
@@ -20,15 +20,31 @@ function venteanimasjon {
         Write-Host "$blank$clear$blank" -NoNewline
     }
 
-param([Parameter(Mandatory)][string]$Kundeforkortelse,[Parameter(Mandatory)][string]$Workload,[Parameter(Mandatory)][string]$Region)
+    function bekreftelse {
+        $input = read-host "Vennligst bekreft med skrive ja eller nei og trykk så enter"
+        switch ($input) {
+        'ja' {
+            write-host 'Du bekreftet, oppretter nå ressursgruppen' -ForegroundColor Green
+        }
 
+        'nei' {
+            Write-Host "Avslutter script..." -ForegroundColor Red
+		    exit
+        }
+
+        default {
+            write-host 'Du kan bare svare ja eller nei, vennligst forsøk igjen.' -ForegroundColor Yellow
+            Bekreftelse
+        }
+    }
+}
 
 
 
 #Variable parametere
-#$KundeForkortelse = "tlab" #Forkortelse for kunde
-#$Workload = "sql"
-#$Region = "norwayeast"
+$KundeForkortelse = Read-Host "Angi forkortelsen til kunde (f.eks: mm eller nk)" 
+$Workload = Read-Host "Angi ett kort navn for workload som opprettes (f.eks: sql eller visma)"
+$Region = Read-Host "Angi region der ressursgruppa skal opprettes (f.eks: norwayeast eller westeurope)"
 #Lister de mest brukte built-in rollene under, kopier ID inn i RBACRolle variabel
 #Contributor = b24988ac-6180-42a0-ab88-20f7382dd24c
 #Owner = 8e3af657-a8ff-443c-a75c-2fe8c4bcb635
@@ -45,6 +61,10 @@ $RGNavn = $KundeForkortelse + "-" + $ResourceGroupForkortelse + "-" + $Workload 
 $AADGrpNavnOwner = "az-rbac-owner-" + $RGNavn
 $AADGrpNavnContributor = "az-rbac-contributor-" + $RGNavn
 $AADGrpNavnReader = "az-rbac-reader" + $RGNavn
+
+Write-Host "Ressursgruppe navn blir da: $RGNavn" -ForegroundColor Green
+
+bekreftelse
 
 #Opprett AZ AD grupper
 $AADGroupOwner = New-AzADGroup -DisplayName $AADGrpNavnOwner -MailNickName "NA"
