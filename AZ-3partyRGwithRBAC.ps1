@@ -20,11 +20,15 @@ function venteanimasjon {
         Write-Host "$blank$clear$blank" -NoNewline
     }
 
+param([Parameter(Mandatory)][string]$Kundeforkortelse,[Parameter(Mandatory)][string]$Workload,[Parameter(Mandatory)][string]$Region)
+
+
+
 
 #Variable parametere
-$KundeForkortelse = "tlab" #Forkortelse for kunde
-$Workload = "sql"
-$Region = "norwayeast"
+#$KundeForkortelse = "tlab" #Forkortelse for kunde
+#$Workload = "sql"
+#$Region = "norwayeast"
 #Lister de mest brukte built-in rollene under, kopier ID inn i RBACRolle variabel
 #Contributor = b24988ac-6180-42a0-ab88-20f7382dd24c
 #Owner = 8e3af657-a8ff-443c-a75c-2fe8c4bcb635
